@@ -33,9 +33,11 @@ IconData getCameraLensIcon(CameraLensDirection? direction) {
   }
 }
 
-void logError(String code, String message) => print('Error: $code\nError Message: $message');
+void logError(String code, String message) =>
+    print('Error: $code\nError Message: $message');
 
-class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindingObserver {
+class _CameraExampleHomeState extends State<CameraExampleHome>
+    with WidgetsBindingObserver {
   CameraController? controller;
   String? imagePath;
   String? videoPath;
@@ -44,14 +46,16 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
   VoidCallback? videoPlayerListener;
   bool enableAudio = true;
   bool useOpenGL = true;
-  TextEditingController _textFieldController = TextEditingController(text: "rtmp://192.168.68.116/live/your_stream");
+  TextEditingController _textFieldController =
+      TextEditingController(text: "rtmp://localhost/live/mystream");
 
   bool get isStreaming => controller?.value.isStreamingVideoRtmp ?? false;
   bool isVisible = true;
 
   bool get isControllerInitialized => controller?.value.isInitialized ?? false;
 
-  bool get isStreamingVideoRtmp => controller?.value.isStreamingVideoRtmp ?? false;
+  bool get isStreamingVideoRtmp =>
+      controller?.value.isStreamingVideoRtmp ?? false;
 
   bool get isRecordingVideo => controller?.value.isRecordingVideo ?? false;
 
@@ -137,16 +141,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
           ),
           _captureControlRowWidget(),
           _toggleAudioWidget(),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                _cameraTogglesRowWidget(),
-                _thumbnailWidget(),
-              ],
-            ),
-          ),
+          _cameraTogglesRowWidget(),
+          _thumbnailWidget(),
         ],
       ),
     );
@@ -194,29 +190,26 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
 
   /// Display the thumbnail of the captured image or video.
   Widget _thumbnailWidget() {
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            videoController == null && imagePath == null
-                ? Container()
-                : SizedBox(
-                    child: (videoController == null)
-                        ? Image.file(File(imagePath!))
-                        : Container(
-                            child: Center(
-                              child: AspectRatio(aspectRatio: videoController!.value.aspectRatio, child: VideoPlayer(videoController!)),
-                            ),
-                            decoration: BoxDecoration(border: Border.all(color: Colors.pink)),
-                          ),
-                    width: 64.0,
-                    height: 64.0,
-                  ),
-          ],
-        ),
-      ),
+    return Row(
+      children: <Widget>[
+        videoController == null && imagePath == null
+            ? Container()
+            : SizedBox(
+                child: (videoController == null)
+                    ? Image.file(File(imagePath!))
+                    : Container(
+                        child: Center(
+                          child: AspectRatio(
+                              aspectRatio: videoController!.value.aspectRatio,
+                              child: VideoPlayer(videoController!)),
+                        ),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.pink)),
+                      ),
+                width: 64.0,
+                height: 64.0,
+              ),
+      ],
     );
   }
 
@@ -231,29 +224,48 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
         IconButton(
           icon: const Icon(Icons.camera_alt),
           color: Colors.blue,
-          onPressed: controller != null && isControllerInitialized ? onTakePictureButtonPressed : null,
+          onPressed: controller != null && isControllerInitialized
+              ? onTakePictureButtonPressed
+              : null,
         ),
         IconButton(
           icon: const Icon(Icons.videocam),
           color: Colors.blue,
-          onPressed: controller != null && isControllerInitialized && !isRecordingVideo ? onVideoRecordButtonPressed : null,
+          onPressed:
+              controller != null && isControllerInitialized && !isRecordingVideo
+                  ? onVideoRecordButtonPressed
+                  : null,
         ),
         IconButton(
           icon: const Icon(Icons.watch),
           color: Colors.blue,
-          onPressed: controller != null && isControllerInitialized && !isStreamingVideoRtmp ? onVideoStreamingButtonPressed : null,
+          onPressed: controller != null &&
+                  isControllerInitialized &&
+                  !isStreamingVideoRtmp
+              ? onVideoStreamingButtonPressed
+              : null,
         ),
         IconButton(
-          icon: controller != null && (isRecordingPaused || isStreamingPaused) ? Icon(Icons.play_arrow) : Icon(Icons.pause),
+          icon: controller != null && (isRecordingPaused || isStreamingPaused)
+              ? Icon(Icons.play_arrow)
+              : Icon(Icons.pause),
           color: Colors.blue,
-          onPressed: controller != null && isControllerInitialized && (isRecordingVideo || isStreamingVideoRtmp)
-              ? (controller != null && (isRecordingPaused || isStreamingPaused) ? onResumeButtonPressed : onPauseButtonPressed)
+          onPressed: controller != null &&
+                  isControllerInitialized &&
+                  (isRecordingVideo || isStreamingVideoRtmp)
+              ? (controller != null && (isRecordingPaused || isStreamingPaused)
+                  ? onResumeButtonPressed
+                  : onPauseButtonPressed)
               : null,
         ),
         IconButton(
           icon: const Icon(Icons.stop),
           color: Colors.red,
-          onPressed: controller != null && isControllerInitialized && (isRecordingVideo || isStreamingVideoRtmp) ? onStopButtonPressed : null,
+          onPressed: controller != null &&
+                  isControllerInitialized &&
+                  (isRecordingVideo || isStreamingVideoRtmp)
+              ? onStopButtonPressed
+              : null,
         )
       ],
     );
@@ -269,25 +281,27 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
       for (CameraDescription cameraDescription in cameras) {
         toggles.add(
           SizedBox(
-            width: 90.0,
+            width: 100.0,
             child: RadioListTile<CameraDescription>(
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
               groupValue: controller?.description,
               value: cameraDescription,
-              onChanged: (CameraDescription? cld) => isRecordingVideo ? null : onNewCameraSelected(cld),
+              onChanged: (CameraDescription? cld) =>
+                  isRecordingVideo ? null : onNewCameraSelected(cld),
             ),
           ),
         );
       }
     }
 
-    return Row(children: toggles);
+    return Wrap(spacing: 10, runSpacing: 10, children: toggles);
   }
 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
   void showInSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   void onNewCameraSelected(CameraDescription? cameraDescription) async {
@@ -314,7 +328,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
           await stopVideoStreaming();
         } else {
           try {
-            final Map<dynamic, dynamic> event = controller!.value.event as Map<dynamic, dynamic>;
+            final Map<dynamic, dynamic> event =
+                controller!.value.event as Map<dynamic, dynamic>;
             print('Event $event');
             final String eventType = event['eventType'] as String;
             if (isVisible && isStreaming && eventType == 'rtmp_retry') {
@@ -517,7 +532,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
             ),
             actions: <Widget>[
               TextButton(
-                child: new Text(MaterialLocalizations.of(context).cancelButtonLabel),
+                child: new Text(
+                    MaterialLocalizations.of(context).cancelButtonLabel),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -539,7 +555,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
       return null;
     }
 
-    if (controller!.value.isStreamingVideoRtmp == true || controller!.value.isStreamingVideoRtmp == true) {
+    if (controller!.value.isStreamingVideoRtmp == true ||
+        controller!.value.isStreamingVideoRtmp == true) {
       return null;
     }
 
@@ -631,7 +648,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
   }
 
   Future<void> _startVideoPlayer() async {
-    final VideoPlayerController vcontroller = VideoPlayerController.file(File(videoPath!));
+    final VideoPlayerController vcontroller =
+        VideoPlayerController.file(File(videoPath!));
     videoPlayerListener = () {
       if (videoController != null) {
         // Refreshing the state to update video player with the correct ratio.
@@ -678,7 +696,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
 
   void _showCameraException(CameraException e) {
     logError(e.code, e.description ?? "No description found");
-    showInSnackBar('Error: ${e.code}\n${e.description ?? "No description found"}');
+    showInSnackBar(
+        'Error: ${e.code}\n${e.description ?? "No description found"}');
   }
 }
 
