@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:rtmp_broadcaster/new/src/common/camera_channel.dart';
 
 import 'common/camera_interface.dart';
 
@@ -97,7 +98,7 @@ class CameraController {
   /// Only one instance of [CameraController] can be active at a time. If you
   /// call [initialize] on a [CameraController] while another is active, the old
   /// controller will be disposed before initializing the new controller.
-  Future<void> initialize() {
+  Future<void> initialize() async {
     if (_instance == this) {
       return Future<void>.value();
     }
@@ -111,6 +112,7 @@ class CameraController {
           .then((_) => completer.complete());
     }
     _instance = this;
+    await CameraChannel.onSurfaceCreatedEvents.take(1).first;
 
     return completer.future;
   }

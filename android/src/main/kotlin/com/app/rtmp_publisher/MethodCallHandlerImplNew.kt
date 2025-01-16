@@ -25,6 +25,9 @@ class MethodCallHandlerImplNew(
     private val permissionsRegistry: PermissionStuff,
     private val flutterEngine: FlutterEngine
 ) : MethodCallHandler {
+    companion object {
+        var instance: MethodCallHandlerImplNew? = null
+    }
 
     private val methodChannel: MethodChannel
     private val imageStreamChannel: EventChannel
@@ -41,11 +44,16 @@ class MethodCallHandlerImplNew(
         imageStreamChannel = EventChannel(messenger, "plugins.flutter.io/rtmp_publisher/imageStream")
         methodChannel.setMethodCallHandler(this)
         nativeViewFactory = NativeViewFactory(activity)
+        instance = this
 
         flutterEngine
             .platformViewsController
             .registry
             .registerViewFactory("hybrid-view-type", nativeViewFactory as NativeViewFactory)
+    }
+
+    fun publishSurfaceCreatedEvent() {
+        methodChannel.invokeMethod("onSurfaceCreated", mapOf<String, Any>())
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)

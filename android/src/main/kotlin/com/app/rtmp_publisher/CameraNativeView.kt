@@ -51,6 +51,7 @@ class CameraNativeView(
         Log.d("CameraNativeView", "surfaceCreated")
         isSurfaceCreated = true
         startPreview(cameraName)
+        MethodCallHandlerImplNew.instance?.publishSurfaceCreatedEvent()
     }
 
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
